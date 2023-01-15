@@ -100,6 +100,7 @@ public class logicni_operatorji {
                 }
                 break;
             case "AND":
+<<<<<<< HEAD
                 if (commands[equation.start + 1].equals("(")) {
                     tempAnswer = conjunction(answer,
                             getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3));
@@ -133,6 +134,42 @@ public class logicni_operatorji {
                 break;
 
             default:
+=======
+            newSubElement.setBoundries(equation.start + 1, equation.start + 2);
+            String operand1 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            newSubElement.setBoundries(equation.start + 3, equation.end);
+            String operand2 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            tempAnswer = conjunction(operand1, operand2);
+            break;
+        case "NAND":
+            newSubElement.setBoundries(equation.start + 1, equation.start + 2);
+            operand1 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            newSubElement.setBoundries(equation.start + 3, equation.end);
+            operand2 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            tempAnswer = nonAnd(operand1, operand2);
+            break;
+        case "NOR":
+            newSubElement.setBoundries(equation.start + 1, equation.start + 2);
+            operand1 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            newSubElement.setBoundries(equation.start + 3, equation.end);
+            operand2 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            tempAnswer = nonOr(operand1, operand2);
+            break;
+        case "XOR":
+            newSubElement.setBoundries(equation.start + 1, equation.start + 2);
+            operand1 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            newSubElement.setBoundries(equation.start + 3, equation.end);
+            operand2 = getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 2);
+            tempAnswer = exclusiveDisjunction(operand1, operand2);
+            break;
+
+            default: //OR/ALI
+		            int a = Integer.parseInt(tempAnswer, 2);
+		            int b = Integer.parseInt(getValue(commands, newSubElement, parenthesis, arrayParenCounter, "", prevOpImportance), 2);
+		            int orResult = a | b;
+		            tempAnswer = Integer.toBinaryString(orResult);
+		            break;
+>>>>>>> d66aaae794acc9678df26ade0cc3d8c7da5a07e5
                 break;
         }
         return null;
@@ -163,21 +200,55 @@ public class logicni_operatorji {
         return string;
     }
 
-    private static String exclusiveDisjunction(String answer, String value) {
-        return null;
+    private static String exclusiveDisjunction(String answer, String value) { //XALI
+    int a = Integer.parseInt(answer, 2);
+    int b = Integer.parseInt(value, 2);
+    int xorResult = a ^ b;
+    return Integer.toBinaryString(xorResult);
     }
 
-    private static String disjunction(String answer, String value) {
-        return null;
+    private static String disjunction(String answer, String value) { //ALI
+        int a = Integer.parseInt(answer, 2);
+        int b = Integer.parseInt(value, 2);
+        int orResult = a | b;
+        return Integer.toBinaryString(orResult);
     }
 
-    private static String conjunction(String answer, String value) {
-        return null;
+    private static String conjunction(String answer, String value) { //IN
+        int a = Integer.parseInt(answer, 2);
+        int b = Integer.parseInt(value, 2);
+        int andResult = a & b;
+        return Integer.toBinaryString(andResult);
+    }
+    private static String nonAnd(String operand1, String operand2) { //NAND
+        int a = Integer.parseInt(operand1, 2);
+        int b = Integer.parseInt(operand2, 2);
+        int nandResult = ~(a & b);
+        return Integer.toBinaryString(nandResult);
     }
 
+<<<<<<< HEAD
     private static String negate(String value) { // funkcija dobi nek string "101010" ki ga more negirat, vrne string
         return null;
+=======
+    private static String nonOr(String operand1, String operand2) { //NOR
+        int a = Integer.parseInt(operand1, 2);
+        int b = Integer.parseInt(operand2, 2);
+        int norResult = ~(a | b);
+        return Integer.toBinaryString(norResult);
+>>>>>>> d66aaae794acc9678df26ade0cc3d8c7da5a07e5
     }
+
+
+
+    private static String negate(String value) {
+        StringBuilder negatedValue = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            negatedValue.append(value.charAt(i) == '0' ? '1' : '0');
+        }
+        return negatedValue.toString();
+    }
+
 
     private static int checkIfDone(int[] isDone) {
         for (int i = 0; i < isDone.length; i++) {
@@ -188,3 +259,5 @@ public class logicni_operatorji {
         return -1;
     }
 }
+
+
