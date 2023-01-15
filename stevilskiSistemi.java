@@ -53,7 +53,7 @@ HEX 144 DEC = 324
         assert input(input).equals(expectedOutput);
     }
 
-    private static String input(String testInput) {
+    public static String input(String testInput) {
         Scanner inputScanner = new Scanner(System.in);
         String input = new String();
         if (testInput == null) {

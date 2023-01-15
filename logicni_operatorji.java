@@ -67,12 +67,12 @@ public class logicni_operatorji {
             System.out.println(arrayParenCounter[i] + " ");
         }
         // get value
-        answer = getValue(commands, defaultEquation, parenthesis, arrayParenCounter, answer);
+        answer = getValue(commands, defaultEquation, parenthesis, arrayParenCounter, answer, 0);
         return null;
     }
 
     private static String getValue(String[] commands, logicni_operatorji.BoolElement equation,
-            String[] parenthesis, int[] arrayParenCounter, String answer) {
+            String[] parenthesis, int[] arrayParenCounter, String answer, int prevOpImportance) {
         BoolElement newSubElement = new BoolElement();
         String tempAnswer = "";
         switch (commands[equation.start]) {
@@ -84,35 +84,81 @@ public class logicni_operatorji {
                         break;
                     }
                 }
-                newSubElement.setBoundries(equation.start+1, tempVal-1);
-                tempAnswer = getValue(commands, equation, parenthesis, arrayParenCounter, answer);
-            case "NEG":
-
+                newSubElement.setBoundries(equation.start + 1, tempVal - 1);
+                tempAnswer = getValue(commands, equation, parenthesis, arrayParenCounter, answer, 0);
                 break;
-
+            case "NEG":
+                if (commands[equation.start].equals("(")) {
+                    newSubElement.setBoundries(equation.start + 1, equation.end);
+                    tempAnswer = negate(getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 0));
+                } else {
+                    tempAnswer = negate(computeValue(commands, equation.start + 1));
+                }
+                break;
             case "AND":
-
+            if (commands[equation.start + 1].equals("(")) {
+                tempAnswer = conjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3));
+            } else {
+                tempAnswer = conjunction(answer, computeValue(commands, equation.start + 1));
+            }
                 break;
 
             case "NAND":
-
+            if (commands[equation.start + 1].equals("(")) {
+                tempAnswer = negate(conjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3)));
+            } else {
+                tempAnswer = negate(conjunction(answer, computeValue(commands, equation.start + 1)));
+            }
                 break;
 
             case "OR":
-
+            tempAnswer = disjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 2));
                 break;
 
             case "NOR":
-
+            tempAnswer = negate(disjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 2)));
                 break;
 
             case "XOR":
-
+            tempAnswer = exclusiveDisjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 1));
                 break;
 
             default:
                 break;
         }
+        return null;
+    }
+
+    private static String computeValue(String[] commands, int index) {      // dobis index kje v 'commands' se nahaja "BIN", za njim pa stevilo: pretvori ta string v BIN in potem vrni
+    if (!commands[index].equals("BIN")) {
+        String retVal = stevilskiSistemi.input(commands[index] + " " + commands[index+1] + " BIN = ");
+        commands[index] = "BIN";
+        String[] a = retVal.split(" ");
+        return design(a[a.length-1]);
+    }
+    return commands[index+1];
+    }
+
+    private static String design(String string) {
+        if (string.length() < 16) {
+            return design("0" + string);
+        }
+        return string;
+    }
+
+    private static String exclusiveDisjunction(String answer, String value) {
+        return null;
+    }
+
+    private static String disjunction(String answer, String value) {
+        return null;
+    }
+
+    private static String conjunction(String answer, String value) {
+        return null;
+    }
+
+    private static String negate(String value) {            // funkcija dobi nek string "101010" ki ga more negirat, vrne string
         return null;
     }
 
