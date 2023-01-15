@@ -15,7 +15,8 @@ public class logicni_operatorji {
     }
 
     public static void main(String[] args) {
-        System.out.println(inputFoo("( NEG DEC 42 AND BIN 010101 OR ( HEX 2A OR OCT 0 ) )"));
+        System.out.println(inputFoo("NEG DEC 42 AND ( HEX 2A OR OCT 0 )"));
+        //System.out.println(inputFoo("( NEG DEC 42 AND BIN 010101 OR ( HEX 2A OR OCT 0 ) )"));
         System.out.println(inputFoo(null));
     }
 
@@ -78,11 +79,14 @@ public class logicni_operatorji {
         switch (commands[equation.start]) {
             case "(":
                 int tempVal = -1;
-                for (int i = equation.start+1; i < equation.end; i++) {                    // tukaj dobimo kje se element
-                    if (arrayParenCounter[i] < arrayParenCounter[equation.start+1]) {      // konca z zaklepajem
-                        tempVal = i -1;
+                for (int i = equation.start + 1; i < equation.end; i++) { // tukaj dobimo kje se element
+                    if (arrayParenCounter[i] < arrayParenCounter[equation.start + 1]) { // konca z zaklepajem
+                        tempVal = i - 1;
                         break;
                     }
+                }
+                if (tempVal == -1) {
+                    tempVal = equation.end;
                 }
                 newSubElement.setBoundries(equation.start + 1, tempVal - 1);
                 tempAnswer = getValue(commands, equation, parenthesis, arrayParenCounter, answer, 0);
@@ -96,31 +100,36 @@ public class logicni_operatorji {
                 }
                 break;
             case "AND":
-            if (commands[equation.start + 1].equals("(")) {
-                tempAnswer = conjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3));
-            } else {
-                tempAnswer = conjunction(answer, computeValue(commands, equation.start + 1));
-            }
+                if (commands[equation.start + 1].equals("(")) {
+                    tempAnswer = conjunction(answer,
+                            getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3));
+                } else {
+                    tempAnswer = conjunction(answer, computeValue(commands, equation.start + 1));
+                }
                 break;
 
             case "NAND":
-            if (commands[equation.start + 1].equals("(")) {
-                tempAnswer = negate(conjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3)));
-            } else {
-                tempAnswer = negate(conjunction(answer, computeValue(commands, equation.start + 1)));
-            }
+                if (commands[equation.start + 1].equals("(")) {
+                    tempAnswer = negate(conjunction(answer,
+                            getValue(commands, newSubElement, parenthesis, arrayParenCounter, answer, 3)));
+                } else {
+                    tempAnswer = negate(conjunction(answer, computeValue(commands, equation.start + 1)));
+                }
                 break;
 
             case "OR":
-            tempAnswer = disjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 2));
+                tempAnswer = disjunction(answer,
+                        getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 2));
                 break;
 
             case "NOR":
-            tempAnswer = negate(disjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 2)));
+                tempAnswer = negate(disjunction(answer,
+                        getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 2)));
                 break;
 
             case "XOR":
-            tempAnswer = exclusiveDisjunction(answer, getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 1));
+                tempAnswer = exclusiveDisjunction(answer,
+                        getValue(commands, newSubElement, parenthesis, arrayParenCounter, null, 1));
                 break;
 
             default:
@@ -129,14 +138,22 @@ public class logicni_operatorji {
         return null;
     }
 
-    private static String computeValue(String[] commands, int index) {      // dobis index kje v 'commands' se nahaja "BIN", za njim pa stevilo: pretvori ta string v BIN in potem vrni
-    if (!commands[index].equals("BIN")) {
-        String retVal = stevilskiSistemi.input(commands[index] + " " + commands[index+1] + " BIN = ");
-        commands[index] = "BIN";
-        String[] a = retVal.split(" ");
-        return design(a[a.length-1]);
+    private static void preveri(boolean b, String s) {
+        if (!b) {
+            throw new IllegalArgumentException("Illegal exception " + s);
+        }
     }
-    return commands[index+1];
+
+    private static String computeValue(String[] commands, int index) { // dobis index kje v 'commands' se nahaja "BIN",
+                                                                       // za njim pa stevilo: pretvori ta string v BIN
+                                                                       // in potem vrni
+        if (!commands[index].equals("BIN")) {
+            String retVal = stevilskiSistemi.input(commands[index] + " " + commands[index + 1] + " BIN = ");
+            commands[index] = "BIN";
+            String[] a = retVal.split(" ");
+            return design(a[a.length - 1]);
+        }
+        return commands[index + 1];
     }
 
     private static String design(String string) {
@@ -158,7 +175,7 @@ public class logicni_operatorji {
         return null;
     }
 
-    private static String negate(String value) {            // funkcija dobi nek string "101010" ki ga more negirat, vrne string
+    private static String negate(String value) { // funkcija dobi nek string "101010" ki ga more negirat, vrne string
         return null;
     }
 
