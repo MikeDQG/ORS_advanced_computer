@@ -1,3 +1,4 @@
+A AND B
 A AND B OR A
 A XOR C
 NEG C OR C

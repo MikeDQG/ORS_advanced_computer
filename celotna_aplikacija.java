@@ -5,7 +5,7 @@ public class celotna_aplikacija {
         boolean konec = false;
         while (!konec) {
             System.out.println(
-                    "Vpisi za zeljeno aktivnost \n'1' za izracun danega racuna \n'2' pretvorba med stevilskimi sistemi \n'3' uporaba logicnih vrat na poljubnih st. sistemih \n'4' branje in pretvorba med st. sistemi iz datoteke \n'5' uporaba logicnih operatorjev iz zapisa v datoteki \n'q' za konec");
+                    "Vpisi za zeljeno aktivnost \n'1' za izracun danega racuna \n'2' pretvorba med stevilskimi sistemi \n'3' uporaba logicnih vrat na poljubnih st. sistemih \n'4' branje in pretvorba med st. sistemi iz datoteke \n'5' uporaba logicnih operatorjev iz zapisa v datoteki \n'0' za konec");
             Scanner inputScanner = new Scanner(System.in);
             String input = inputScanner.nextLine();
             switch (input) {
@@ -22,9 +22,9 @@ public class celotna_aplikacija {
                     stevilskiSistemi.convertFromFile();
                     break;
                 case "5":
-                    computer.main(args);
+                    //  iz datoteke
                     break;
-                case "q":
+                case "0":
                     System.out.println("Konec.");
                     konec = true;
                     break;

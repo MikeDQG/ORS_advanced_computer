@@ -6,45 +6,7 @@ import java.util.Scanner;
 public class stevilskiSistemi {
 
     public static void main(String[] args) {
-        /*
-
-DEC 144 BIN = 10010000
-DEC 42 OCT = 52
-DEC 100 HEX = 64
-BIN 101101001 DEC = 361
-BIN 10010000 OCT = 220
-BIN 10010000 HEX = 90
-OCT 723 BIN = 111010011
-OCT 723 DEC = 467
-OCT 723 HEX = 1D3
-HEX A3 BIN = 10100011
-HEX 16A OCT = 552
-HEX 144 DEC = 324
-         */
-/* 
-
-        String[][] testCommands = {
-                { "DEC 144 BIN =", "DEC 144 BIN = 10010000" },
-                { "DEC 42 OCT =", "DEC 42 OCT = 52" },
-                { "DEC 100 HEX =", "DEC 100 HEX = 64" },
-                { "BIN 101101001 DEC =", "BIN 101101001 DEC = 361" },
-                { "BIN 10010000 OCT =", "BIN 10010000 OCT = 220" },
-                { "BIN 10010000 HEX =", "BIN 10010000 HEX = 90" },
-                { "OCT 723 BIN =", "OCT 723 BIN = 111010011" },
-                { "OCT 723 DEC =", "OCT 723 DEC = 467" },
-                { "OCT 723 HEX =", "OCT 723 HEX = 1D3" },
-                { "HEX A3 BIN =", "HEX A3 BIN = 10100011" },
-                { "HEX 16A OCT =", "HEX 16A OCT = 552" },
-                { "HEX 144 DEC =", "HEX 144 DEC = 324" },
-        };
-
-        for (int i = 0; i < testCommands.length; i++) {
-            testInput(testCommands[i][0], testCommands[i][1]);
-        }
-        for (int i = 0; i < testCommands.length; i++) {
-            System.out.println(input(testCommands[i][0]));
-        }
-*/
+        
     System.out.println(input(null));
         // System.out.println(input(null));    // if you expect to type commands in terminal, insert "null"
     }
