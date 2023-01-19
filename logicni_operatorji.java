@@ -15,13 +15,14 @@ public class logicni_operatorji {
     }
 
     public static void main(String[] args) {
-        System.out.println("\n" + inputFoo("BIN 101010 AND BIN 111000"));
-        System.out.println(inputFoo("NEG DEC 42"));
-        System.out.println("\n" + inputFoo("NEG ( BIN 101010 AND BIN 111000 )"));
-        System.out.println("\n" + inputFoo("NEG ( BIN 101010 OR BIN 111000 AND BIN 101000 )"));
-        // System.out.println(inputFoo("NEG DEC 42 AND ( HEX 2A OR OCT 0 )"));
-        // System.out.println(inputFoo("( NEG DEC 42 AND BIN 010101 OR ( HEX 2A OR OCT 0
-        // ) )"));
+        System.out.println(inputFoo("BIN 101010 AND BIN 111000") + "\n");
+        System.out.println(inputFoo("NEG DEC 42") + "\n");
+        System.out.println(inputFoo("BIN 1000101 NOR BIN 1110010 AND BIN 1111111") + "\n");
+        System.out.println(inputFoo("NEG ( BIN 101010 AND BIN 111000 )") + "\n");
+        System.out.println(inputFoo("NEG ( BIN 101010 OR BIN 111000 AND BIN 101000 )") + "\n");
+        System.out.println(inputFoo("NEG ( BIN 101010 XOR BIN 111000 NAND ( BIN 101000 OR BIN 01011010 ) )") + "\n");
+        System.out.println(inputFoo("NEG DEC 42 AND ( HEX 2A OR OCT 0 )") + "\n");
+        System.out.println(inputFoo("( NEG DEC 42 AND BIN 010101 OR ( HEX 2A OR OCT 0 ) )") + "\n");
         // System.out.println(inputFoo(null));
     }
 
@@ -36,6 +37,7 @@ public class logicni_operatorji {
         String[] commands = command.split(" "); // zdaj imamo polje ukazov ene vrstice vnosnega niza
         StringBuilder finalAnswer = new StringBuilder();
         finalAnswer.append(command + " ");
+        finalAnswer.append(" = ");
         finalAnswer.append(getAnswer(commands));
         return finalAnswer.toString();
     }
@@ -44,8 +46,8 @@ public class logicni_operatorji {
         String answer = null;
         BoolElement defaultEquation = new BoolElement();
         int l = commands.length;
-        defaultEquation.setBoundries(0, l-1);
-        String[] parenthesis = new String[l];           // vrzi ven to
+        defaultEquation.setBoundries(0, l - 1);
+        String[] parenthesis = new String[l]; // vrzi ven to
         int[] arrayParenCounter = new int[l];
         int counterParen = 0;
         int[] operations = new int[l];
@@ -87,7 +89,7 @@ public class logicni_operatorji {
          */
         // get value
         answer = getValue(commands, defaultEquation, operations, arrayParenCounter, answer, 0, isDone);
-        return answer;
+        return design(answer);
     }
 
     private static String getValue(String[] commands, logicni_operatorji.BoolElement equation,
@@ -109,8 +111,9 @@ public class logicni_operatorji {
                     tempVal = -1;
                     tempVal = findParent(equation.start + 1, equation, arrayParenCounter);
                     newSubElement.setBoundries(equation.start + 1, equation.end);
-                    tempAnswer = negate(getValue(commands, newSubElement, operations, arrayParenCounter, answer, 0, isDone));
-                isDone[equation.start] = 1;
+                    isDone[equation.start] = 1;
+                    tempAnswer = negate(
+                            getValue(commands, newSubElement, operations, arrayParenCounter, answer, 0, isDone));
                 } else {
                     tempAnswer = negate(computeValue(commands, equation.start + 1));
                     isDone = makeDone(isDone, equation.start, equation.start + 2);
@@ -128,7 +131,7 @@ public class logicni_operatorji {
                     isDone = makeDone(isDone, equation.start, tempVal);
                 } else {
                     tempAnswer = conjunction(answer, computeValue(commands, equation.start + 1));
-                    isDone = makeDone(isDone, equation.start, equation.start+2);
+                    isDone = makeDone(isDone, equation.start, equation.start + 2);
                 }
                 break;
 
@@ -141,20 +144,20 @@ public class logicni_operatorji {
                     isDone[tempVal] = 1;
                     tempAnswer = negate(conjunction(answer,
                             getValue(commands, newSubElement, operations, arrayParenCounter, answer, 3, isDone)));
-                            isDone = makeDone(isDone, equation.start, tempVal);
+                    isDone = makeDone(isDone, equation.start, tempVal);
                 } else {
                     tempAnswer = negate(conjunction(answer, computeValue(commands, equation.start + 1)));
-                    isDone = makeDone(isDone, equation.start+1, equation.start+2);
+                    isDone = makeDone(isDone, equation.start + 1, equation.start + 2);
                 }
                 break;
 
             case "OR":
-                if (nextOperation(equation.start+1, operations, equation.end, 2)) {
-                    newSubElement.setBoundries(equation.start+1, equation.end);
+                if (nextOperation(equation.start + 1, operations, equation.end, 2)) {
+                    newSubElement.setBoundries(equation.start + 1, equation.end);
                     tempAnswer = disjunction(answer,
-                    getValue(commands, newSubElement, operations, arrayParenCounter, null, 2, isDone));
+                            getValue(commands, newSubElement, operations, arrayParenCounter, null, 2, isDone));
                     isDone = makeDone(isDone, equation.start, equation.end);
-                } else if (commands[equation.start+1].equals("(")) {
+                } else if (commands[equation.start + 1].equals("(")) {
                     tempVal = -1;
                     tempVal = findParent(equation.start + 1, equation, arrayParenCounter);
                     newSubElement.setBoundries(equation.start + 1, tempVal - 1);
@@ -165,31 +168,50 @@ public class logicni_operatorji {
                     isDone = makeDone(isDone, equation.start, tempVal);
                 } else {
                     tempAnswer = disjunction(answer, computeValue(commands, equation.start + 1));
-                    isDone = makeDone(isDone, equation.start, equation.start+2);
+                    isDone = makeDone(isDone, equation.start, equation.start + 2);
                 }
                 break;
 
             case "NOR":
-                tempAnswer = negate(disjunction(answer,
-                        getValue(commands, newSubElement, operations, arrayParenCounter, null, 2, isDone)));
+                if (nextOperation(equation.start + 1, operations, equation.end, 2)) {
+                    newSubElement.setBoundries(equation.start + 1, equation.end);
+                    tempAnswer = negate(disjunction(answer,
+                            getValue(commands, newSubElement, operations, arrayParenCounter, null, 2, isDone)));
+                    isDone = makeDone(isDone, equation.start, equation.end);
+                } else if (commands[equation.start + 1].equals("(")) {
+                    tempVal = -1;
+                    tempVal = findParent(equation.start + 1, equation, arrayParenCounter);
+                    newSubElement.setBoundries(equation.start + 1, tempVal - 1);
+                    isDone[equation.start] = 1;
+                    isDone[tempVal] = 1;
+                    tempAnswer = disjunction(answer,
+                            getValue(commands, newSubElement, operations, arrayParenCounter, answer, 2, isDone));
+                    isDone = makeDone(isDone, equation.start, tempVal);
+                } else {
+                    tempAnswer = negate(disjunction(answer, computeValue(commands, equation.start + 1)));
+                    isDone = makeDone(isDone, equation.start, equation.start + 2);
+                }
                 break;
 
             case "XOR":
+                newSubElement.setBoundries(equation.start + 1, equation.end);
                 tempAnswer = exclusiveDisjunction(answer,
                         getValue(commands, newSubElement, operations, arrayParenCounter, null, 1, isDone));
+                makeDone(isDone, equation.start, equation.end);
                 break;
 
-            default:        // stevilo 
-            tempAnswer = computeValue(commands, equation.start);
-            makeDone(isDone, equation.start, equation.start+1);
+            default: // stevilo
+                tempAnswer = computeValue(commands, equation.start);
+                makeDone(isDone, equation.start, equation.start + 1);
                 break;
         }
         int initDoneMate = checkIfDone(isDone, equation.start, equation.end);
         if (initDoneMate > -1) {
             newSubElement.setBoundries(initDoneMate, equation.end);
-            tempAnswer = getValue(commands, newSubElement, operations, arrayParenCounter, tempAnswer, prevOpImportance, isDone);
+            tempAnswer = getValue(commands, newSubElement, operations, arrayParenCounter, tempAnswer, prevOpImportance,
+                    isDone);
         }
-        return tempAnswer;
+        return design(tempAnswer);
     }
 
     private static boolean nextOperation(int i, int[] operations, int end, int importance) {
@@ -250,32 +272,33 @@ public class logicni_operatorji {
     }
 
     private static String exclusiveDisjunction(String answer, String value) { // XALI
-        int a = Integer.parseInt(answer, 2);
-        int b = Integer.parseInt(value, 2);
+        int a = Integer.parseInt(design(answer), 2);
+        int b = Integer.parseInt(design(value), 2);
         int xorResult = a ^ b;
-        return Integer.toBinaryString(xorResult);
+        return design(Integer.toBinaryString(xorResult));
     }
 
     private static String disjunction(String answer, String value) { // ALI
-        int a = Integer.parseInt(answer, 2);
-        int b = Integer.parseInt(value, 2);
+        int a = Integer.parseInt(design(answer), 2);
+        int b = Integer.parseInt(design(value), 2);
         int orResult = a | b;
-        return Integer.toBinaryString(orResult);
+        return design(Integer.toBinaryString(orResult));
     }
 
     private static String conjunction(String answer, String value) { // IN
-        int a = Integer.parseInt(answer, 2);
-        int b = Integer.parseInt(value, 2);
+        int a = Integer.parseInt(design(answer), 2);
+        int b = Integer.parseInt(design(value), 2);
         int andResult = a & b;
-        return Integer.toBinaryString(andResult);
+        return design(Integer.toBinaryString(andResult));
     }
 
     private static String negate(String value) {
+        value = design(value);
         StringBuilder negatedValue = new StringBuilder();
         for (int i = 0; i < value.length(); i++) {
             negatedValue.append(value.charAt(i) == '0' ? '1' : '0');
         }
-        return negatedValue.toString();
+        return design(negatedValue.toString());
     }
 
     private static int checkIfDone(int[] isDone, int start, int end) {

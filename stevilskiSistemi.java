@@ -3,6 +3,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
+
 public class stevilskiSistemi {
 
     public static void main(String[] args) {
@@ -27,6 +29,10 @@ public class stevilskiSistemi {
         strBldInput.append(input);
         strBldInput.append(" ");
         String[] commands = input.split(" ");
+        if (commands[1].equals("0")) {
+            strBldInput.append("0");
+            return strBldInput.toString();
+        }
         String[] possibleComm = { "DEC", "BIN", "OCT", "HEX" };
         int[] verifiedValues = new int[4];
         if (commands[0].equals(possibleComm[0])) {
