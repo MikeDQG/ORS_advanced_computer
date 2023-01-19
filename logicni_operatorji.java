@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -310,7 +312,30 @@ public class logicni_operatorji {
         return -1;
     }
 
+    private static ArrayList<String> readLineFromFile() {
+        ArrayList<String> allLines = new ArrayList<>();
+        try {
+            File myObj = new File("logicni_operatorji.txt");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                allLines.add(data);
+                // System.out.println(data);
+            }
+            myReader.close();
+            return allLines;
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static String convertFromFile() {
+        ArrayList<String> lines = readLineFromFile();
+        for (int i = 0; i < lines.size(); i++) {
+            System.out.println(inputFoo(lines.get(i)));
+        }
         return null;
     }
 }
