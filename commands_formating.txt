@@ -13,3 +13,14 @@ o	    Uporaba logičnih vrat na poljubnem številskem sistemu (2%)
 •	Branje datoteke z računi in jih rešiti (10%)
 4    o	Za pretvarjanje sistemov (5%)
 5    o	Za logične operatorje (5%)
+
+
+
+pow ( 3 , 2 ) =
+pow ( ( 3 + 5 ) , ( 3 - ( 0  + 2 ) ) ) + 8 =
+3 * 5 + 8 =
+3 + 5 * 8 =
+35 * 12 + 66 / 3 =
+sqrt ( 100 + 44 ) + pow ( 5 , 2 ) =
+5 * ( 3 + 4 ) =
+22 / 7 * pow ( 5 , 2 ) =
