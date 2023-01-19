@@ -14,7 +14,7 @@ public class logicni_operatorji {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {/*
         System.out.println(inputFoo("BIN 101010 AND BIN 111000") + "\n");
         System.out.println(inputFoo("NEG DEC 42") + "\n");
         System.out.println(inputFoo("BIN 1000101 NOR BIN 1110010 AND BIN 1111111") + "\n");
@@ -22,8 +22,8 @@ public class logicni_operatorji {
         System.out.println(inputFoo("NEG ( BIN 101010 OR BIN 111000 AND BIN 101000 )") + "\n");
         System.out.println(inputFoo("NEG ( BIN 101010 XOR BIN 111000 NAND ( BIN 101000 OR BIN 01011010 ) )") + "\n");
         System.out.println(inputFoo("NEG DEC 42 AND ( HEX 2A OR OCT 0 )") + "\n");
-        System.out.println(inputFoo("( NEG DEC 42 AND BIN 010101 OR ( HEX 2A OR OCT 0 ) )") + "\n");
-        // System.out.println(inputFoo(null));
+        System.out.println(inputFoo("( NEG DEC 42 AND BIN 010101 OR ( HEX 2A OR OCT 0 ) )") + "\n"); */
+        System.out.println(inputFoo(null));
     }
 
     private static String inputFoo(String string) { // vnesi null ce bere iz terminala
@@ -308,5 +308,9 @@ public class logicni_operatorji {
             }
         }
         return -1;
+    }
+
+    public static String convertFromFile() {
+        return null;
     }
 }

@@ -16,13 +16,13 @@ public class celotna_aplikacija {
                     stevilskiSistemi.main(args);
                     break;
                 case "3":
-                    // logicna vrata
+                    logicni_operatorji.main(args);
                     break;
                 case "4":
                     stevilskiSistemi.convertFromFile();
                     break;
                 case "5":
-                    //  iz datoteke
+                    logicni_operatorji.convertFromFile();
                     break;
                 case "0":
                     System.out.println("Konec.");
@@ -32,7 +32,6 @@ public class celotna_aplikacija {
                     System.out.println("Napacen vnos.");
                     break;
             }
-            //
         }
     }
 }
