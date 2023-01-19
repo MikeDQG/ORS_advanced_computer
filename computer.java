@@ -216,7 +216,7 @@ public class computer {
             case "+":
                 if (nextOperation(eqElement.start, operations, eqElement.end, 2)) {
                     newElEqElement.initialiseElement(eqElement.start +1, eqElement.end);
-                    answer = getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations);
+                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations));
                     isDone = makeDone(isDone, eqElement);
                 } else if (equation.get(eqElement.start +1).equals("(")) {
                     temVal = -1;
@@ -227,46 +227,52 @@ public class computer {
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +1);
+                    System.out.println(answer);
+                    System.out.println(tempAnswer);
+                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start+1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
                     makeDone(isDone, doneElement);
                 }
                 break;
                 case "-":
                 if (nextOperation(eqElement.start, operations, eqElement.end, 2)) {
                     newElEqElement.initialiseElement(eqElement.start +1, eqElement.end);
-                    answer = getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations);
+                    answer = divide(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations));
                     isDone = makeDone(isDone, eqElement);
                 } else if (equation.get(eqElement.start +1).equals("(")) {
                     temVal = -1;
                     temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
                     newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    answer = divide(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +1);
+                    System.out.println(answer);
+                    System.out.println(tempAnswer);
+                    answer = divide(tempAnswer, convertToInt(equation.get(eqElement.start+1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
                     makeDone(isDone, doneElement);
                 }
                 break;
                 case "*":
-                if (nextOperation(eqElement.start, operations, eqElement.end, 3)) {
+                if (nextOperation(eqElement.start, operations, eqElement.end, 2)) {
                     newElEqElement.initialiseElement(eqElement.start +1, eqElement.end);
-                    answer = getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations);
+                    answer = multiply(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations));
                     isDone = makeDone(isDone, eqElement);
                 } else if (equation.get(eqElement.start +1).equals("(")) {
                     temVal = -1;
                     temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
                     newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    answer = multiply(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +1);
+                    System.out.println(answer);
+                    System.out.println(tempAnswer);
+                    answer = multiply(tempAnswer, convertToInt(equation.get(eqElement.start+1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
                     makeDone(isDone, doneElement);
                 }
                 break;
@@ -276,12 +282,12 @@ public class computer {
                     temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
                     newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    answer = divide(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +1);
+                    answer = divide(tempAnswer, convertToInt(equation.get(eqElement.start)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
                     makeDone(isDone, doneElement);
                 }
                 break;
@@ -310,8 +316,8 @@ public class computer {
 
         int notDone = checkIfDone(isDone, eqElement);
         if (notDone != -1) {
-            doneElement.start++;
-            answer = getValue(equation, doneElement, numbers, operators, possibleOperators, isDone,
+            eqElement.start = notDone;
+            answer = getValue(equation, eqElement, numbers, operators, possibleOperators, isDone,
                     collectionOfEqElements, arrayParenCounter, -1, answer, operations);
         }
         return answer;
@@ -347,14 +353,14 @@ public class computer {
         return isDone;
     }
 
-    public double divide(double a, double b) {
+    public static double divide(double a, double b) {
         if (b == 0) {
             throw new IllegalArgumentException("Cannot divide by zero.");
         }
         return a / b;
     }
 
-    public double multiply(double a, double b) {
+    public static double multiply(double a, double b) {
         return a * b;
     }
 
