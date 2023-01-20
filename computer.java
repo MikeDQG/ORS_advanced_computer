@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.lang.model.element.Element;
+import javax.naming.InitialContext;
 import javax.sound.sampled.Line;
 
 import java.io.File; // Import the File class
@@ -40,7 +41,9 @@ public class computer {
     }
 
     public static void main(String[] args) {
-        System.out.println(compute(null));
+        Scanner scanner = new Scanner(System.in);
+        String s = scanner.nextLine();
+        System.out.println(compute(s));
     }
 
     private static String compute(String defaultInputString) {
@@ -150,12 +153,11 @@ public class computer {
                 parenthesisCounter = 0;
                 int powComa = -1;
                 for (int i = eqElement.start + 1; i < operators.length; i++) {
-                    System.out.println(operators[i]);
                     if (operators[i] != null) {
                         if (operators[i].equals(")")) {
                             if (parenthesisCounter <= 1) {
                                 newElEqElement.start = eqElement.start + 1;
-                                newElEqElement.end = i - 1;
+                                newElEqElement.end = i;
                                 newElEqElement.setNewElement(equation, newElEqElement);
                                 isDone[newElEqElement.start] = 1;
                                 isDone[newElEqElement.end] = 1;
@@ -173,34 +175,43 @@ public class computer {
                 assert powComa > -1;
                 EqElement first = new EqElement();
                 EqElement second = new EqElement();
+                isDone[eqElement.start] = 1;
+                isDone[eqElement.start + 1] = 1;
+                isDone[newElEqElement.end] = 1;
                 first.initialiseElement(newElEqElement.start + 1, powComa - 1);
-                second.initialiseElement(powComa + 1, newElEqElement.end);
+                second.initialiseElement(powComa + 1, newElEqElement.end - 1);
                 answer = Math.pow(
                         getValue(equation, first, numbers, operators, possibleOperators, isDone,
                                 collectionOfEqElements, arrayParenCounter, -1, tempAnswer, operations),
                         getValue(equation, second, numbers, operators, possibleOperators, isDone,
                                 collectionOfEqElements, arrayParenCounter, -1, tempAnswer, operations));
+                doneElement.initialiseElement(eqElement.start, newElEqElement.end);
+                makeDone(isDone, doneElement);
                 break;
             case "sqrt":
                 int temVal = findParent(eqElement.start, eqElement, arrayParenCounter);
+                newElEqElement.initialiseElement(eqElement.start + 2, temVal -1);
+                isDone[eqElement.start] = 1;
+                isDone[eqElement.start + 1] = 1;
+                isDone[temVal] = 1;
                 first = new EqElement();
-                first.initialiseElement(newElEqElement.start + 1, temVal);
+                first.initialiseElement(newElEqElement.start, temVal -1);
                 answer = Math.sqrt(getValue(equation, first, numbers, operators, possibleOperators, isDone,
                         collectionOfEqElements, arrayParenCounter, -1, tempAnswer, operations));
+                doneElement.initialiseElement(eqElement.start, temVal);
+                makeDone(isDone, doneElement);
                 break;
             case "(":
                 parenthesisCounter = 1;
                 for (int i = eqElement.start + 1; i < operators.length; i++) {
-                    System.out.println(operators[i]);
                     if (operators[i] != null) {
                         if (operators[i].equals(")")) {
                             if (parenthesisCounter <= 1) {
                                 newElEqElement.start = eqElement.start + 1;
-                                newElEqElement.end = i - 1;
+                                newElEqElement.end = i;
                                 newElEqElement.setNewElement(equation, newElEqElement);
                                 isDone[newElEqElement.start] = 1;
                                 isDone[newElEqElement.end] = 1;
-                                System.out.println("makin a new element");
                                 break;
                             } else {
                                 parenthesisCounter--;
@@ -212,82 +223,120 @@ public class computer {
                 }
                 answer = getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
                         collectionOfEqElements, arrayParenCounter, -1, tempAnswer, operations);
+                doneElement.initialiseElement(eqElement.start, newElEqElement.end);
+                makeDone(isDone, doneElement);
                 break;
             case "+":
                 if (nextOperation(eqElement.start, operations, eqElement.end, 2)) {
-                    newElEqElement.initialiseElement(eqElement.start +1, eqElement.end);
-                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations));
+                    newElEqElement.initialiseElement(eqElement.start + 1, eqElement.end);
+                    answer = add(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer,
+                                    operations));
                     isDone = makeDone(isDone, eqElement);
-                } else if (equation.get(eqElement.start +1).equals("(")) {
+                } else if (equation.get(eqElement.start + 1).equals("(")) {
                     temVal = -1;
-                    temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
+                    temVal = findParent(eqElement.start + 1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
-                    newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    newElEqElement.initialiseElement(eqElement.start + 1, temVal);
+                    answer = add(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators,
+                            isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    System.out.println(answer);
-                    System.out.println(tempAnswer);
-                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start+1)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
+                    answer = add(tempAnswer, convertToInt(equation.get(eqElement.start + 1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start + 2);
                     makeDone(isDone, doneElement);
                 }
                 break;
-                case "-":
+            case "-":
                 if (nextOperation(eqElement.start, operations, eqElement.end, 2)) {
-                    newElEqElement.initialiseElement(eqElement.start +1, eqElement.end);
-                    answer = divide(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations));
+                    newElEqElement.initialiseElement(eqElement.start + 1, eqElement.end);
+                    answer = subtract(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer,
+                                    operations));
                     isDone = makeDone(isDone, eqElement);
-                } else if (equation.get(eqElement.start +1).equals("(")) {
+                } else if (equation.get(eqElement.start + 1).equals("(")) {
                     temVal = -1;
-                    temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
+                    temVal = findParent(eqElement.start + 1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
-                    newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = divide(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    newElEqElement.initialiseElement(eqElement.start + 1, temVal);
+                    answer = subtract(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    System.out.println(answer);
-                    System.out.println(tempAnswer);
-                    answer = divide(tempAnswer, convertToInt(equation.get(eqElement.start+1)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
+                    answer = subtract(tempAnswer, convertToInt(equation.get(eqElement.start + 1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start + 2);
                     makeDone(isDone, doneElement);
                 }
                 break;
-                case "*":
-                if (nextOperation(eqElement.start, operations, eqElement.end, 2)) {
-                    newElEqElement.initialiseElement(eqElement.start +1, eqElement.end);
-                    answer = multiply(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer, operations));
+            case "*":
+                if (nextOperation(eqElement.start, operations, eqElement.end, 3)) {
+                    newElEqElement.initialiseElement(eqElement.start + 1, eqElement.end);
+                    answer = multiply(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer,
+                                    operations));
                     isDone = makeDone(isDone, eqElement);
-                } else if (equation.get(eqElement.start +1).equals("(")) {
+                } else if (equation.get(eqElement.start + 1).equals("(")) {
                     temVal = -1;
-                    temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
+                    temVal = findParent(eqElement.start + 1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
-                    newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = multiply(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    newElEqElement.initialiseElement(eqElement.start + 1, temVal);
+                    answer = multiply(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    System.out.println(answer);
-                    System.out.println(tempAnswer);
-                    answer = multiply(tempAnswer, convertToInt(equation.get(eqElement.start+1)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
+                    answer = multiply(tempAnswer, convertToInt(equation.get(eqElement.start + 1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start + 2);
                     makeDone(isDone, doneElement);
                 }
                 break;
-                case "/":
-                if (equation.get(eqElement.start +1).equals("(")) {
+
+                case "%":
+                if (nextOperation(eqElement.start, operations, eqElement.end, 3)) {
+                    newElEqElement.initialiseElement(eqElement.start + 1, eqElement.end);
+                    answer = remainder(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, prevOpImportance, tempAnswer,
+                                    operations));
+                    isDone = makeDone(isDone, eqElement);
+                } else if (equation.get(eqElement.start + 1).equals("(")) {
                     temVal = -1;
-                    temVal = findParent(eqElement.start +1, eqElement, arrayParenCounter);
+                    temVal = findParent(eqElement.start + 1, eqElement, arrayParenCounter);
                     isDone[eqElement.start] = 1;
-                    newElEqElement.initialiseElement(eqElement.start+1, temVal);
-                    answer = divide(tempAnswer, getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone, collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    newElEqElement.initialiseElement(eqElement.start + 1, temVal);
+                    answer = remainder(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
                     doneElement.initialiseElement(eqElement.start, temVal);
                     isDone = makeDone(isDone, doneElement);
                 } else {
-                    answer = divide(tempAnswer, convertToInt(equation.get(eqElement.start)));
-                    doneElement.initialiseElement(eqElement.start, eqElement.start +2);
+                    answer = remainder(tempAnswer, convertToInt(equation.get(eqElement.start + 1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start + 2);
+                    makeDone(isDone, doneElement);
+                }
+                break;
+
+            case "/":
+                if (equation.get(eqElement.start + 1).equals("(")) {
+                    temVal = -1;
+                    temVal = findParent(eqElement.start + 1, eqElement, arrayParenCounter);
+                    isDone[eqElement.start] = 1;
+                    newElEqElement.initialiseElement(eqElement.start + 1, temVal);
+                    answer = divide(tempAnswer,
+                            getValue(equation, newElEqElement, numbers, operators, possibleOperators, isDone,
+                                    collectionOfEqElements, arrayParenCounter, 2, tempAnswer, operations));
+                    doneElement.initialiseElement(eqElement.start, temVal);
+                    isDone = makeDone(isDone, doneElement);
+                } else {
+                    answer = divide(tempAnswer, convertToInt(equation.get(eqElement.start + 1)));
+                    doneElement.initialiseElement(eqElement.start, eqElement.start + 2);
                     makeDone(isDone, doneElement);
                 }
                 break;
@@ -322,6 +371,7 @@ public class computer {
         }
         return answer;
     }
+
     private static int convertToInt(String s) {
         return Integer.parseInt(s);
     }
@@ -357,15 +407,23 @@ public class computer {
         if (b == 0) {
             throw new IllegalArgumentException("Cannot divide by zero.");
         }
-        return a / b;
+        double val = a / b;
+        return val;
     }
 
     public static double multiply(double a, double b) {
-        return a * b;
+        double val = a * b;
+        return val;
     }
 
-    public double subtract(double a, double b) {
-        return a - b;
+    public static double remainder(double a, double b) {
+        double val = a % b;
+        return val;
+    }
+
+    public static double subtract(double a, double b) {
+        double val = a - b;
+        return val;
     }
 
     public static double add(double tempAnswer, double d) {
