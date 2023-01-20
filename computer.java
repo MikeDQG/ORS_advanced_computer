@@ -143,7 +143,6 @@ public class computer {
     private static double getValue(ArrayList<String> equation, EqElement eqElement, int[] numbers, String[] operators,
             String[] possibleOperators, int[] isDone, ArrayList<computer.EqElement> collectionOfEqElements,
             int[] arrayParenCounter, int prevOpImportance, double tempAnswer, int[] operations) {
-        String[] priorities = new String[] { "pow", "sqrt", "(", "/", "*", "-", "+" };
         double answer = 0;
         int parenthesisCounter = 0;
         EqElement newElEqElement = new EqElement();
@@ -461,5 +460,9 @@ public class computer {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void computeFromFile() {
+        System.out.println(compute(null));
     }
 }
